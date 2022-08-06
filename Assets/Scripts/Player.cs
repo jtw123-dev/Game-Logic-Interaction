@@ -1,27 +1,43 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
+    private Vector3 _pos; 
+    private float distance;
+
     // Update is called once per frame
     void Update()
     {
-        RaycastHit hit;
-        Ray rayOrigin = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (Input.GetMouseButtonDown(0))
+        if (distance > 1)
         {
-            if (Physics.Raycast(rayOrigin,out hit))
+            Vector3 direction = _pos - transform.position;
+            direction.Normalize();
+            transform.Translate(direction * 2 *Time.deltaTime);     
+        }
+        if (Mouse.current.leftButton.wasPressedThisFrame)
+        {
+            Ray rayOrigin = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
+            RaycastHit hitInfo;
+
+           if (Physics.Raycast(rayOrigin,out hitInfo))
             {
-                if (hit.transform.tag == "Cube")
+                if (hitInfo.collider.tag=="Floor")
                 {
-                    hit.transform.gameObject.GetComponent<MeshRenderer>().material.color = Random.ColorHSV();
-                }
-                else if (hit.transform.tag == "Capsule")
-                {
-                    hit.transform.gameObject.GetComponent<MeshRenderer>().material.color = Color.black;
+                    _pos = hitInfo.point;
+                    
+                    distance = Vector3.Distance(_pos, transform.position);
                 }
             }
         }
+        //if left click
+        //send out ray
+        //if hit floor
+        //send player there
+
+        //move towards target 
+        //code logic
     }
 }
